@@ -1,7 +1,11 @@
 package no.kantega;
 
-public class Pub {
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
 
+public class Pub {
 
     public static final String ONE_BEER = "hansa";
     public static final String ONE_CIDER = "grans";
@@ -9,61 +13,42 @@ public class Pub {
     public static final String GT = "gt";
     public static final String BACARDI_SPECIAL = "bacardi_special";
 
-    public int computeCost(String drink, boolean student, int amount) {
+    Map<String, BiFunction<Boolean, Integer, Integer>> drinks = Map.of(
+            ONE_BEER, (student, amount) -> computeSimpleBeverage(student, amount, 74),
+            ONE_CIDER, (student, amount) -> computeSimpleBeverage(student, amount, 103),
+            A_PROPER_CIDER, (student, amount) -> computeSimpleBeverage(student, amount, 110),
+            GT, (student, amount) ->
+                    computeCocktail(amount, DrinkIngredient.GIN.getPrice(), DrinkIngredient.GREEN_STUFF.getPrice(), DrinkIngredient.TONIC_WATER.getPrice()),
+            BACARDI_SPECIAL, (student, amount) ->
+                    computeCocktail(amount, DrinkIngredient.GIN.getPrice(2), DrinkIngredient.RUM.getPrice(), DrinkIngredient.GRENADINE.getPrice(), DrinkIngredient.LIME_JUICE.getPrice())
+    );
 
-        if (amount > 2 && (drink == GT || drink == BACARDI_SPECIAL)) {
+    private int computeSimpleBeverage(boolean student, int amount, int cost) {
+        if (student) {
+            return (cost - cost/10) * amount;
+        }
+        return cost * amount;
+    }
+
+    private int computeCocktail(int amount, Integer... drinkIngredientsPrice) {
+        if (amount > 2) {
             throw new RuntimeException("Too many drinks, max 2.");
         }
-        int price;
-        if (drink.equals(ONE_BEER)) {
-            price = 74;
-        }
-        else if (drink.equals(ONE_CIDER)) {
-            price = 103;
-        }
-        else if (drink.equals(A_PROPER_CIDER)) price = 110;
-        else if (drink.equals(GT)) {
-            price = ingredient6() + ingredient5() + ingredient4();
-        }
-        else if (drink.equals(BACARDI_SPECIAL)) {
-            price = ingredient6()/2 + ingredient1() + ingredient2() + ingredient3();
-        }
-        else {
-            throw new RuntimeException("No such drink exists");
-        }
-        if (student && (drink == ONE_CIDER || drink == ONE_BEER || drink == A_PROPER_CIDER)) {
-            price = price - price/10;
-        }
-        return price*amount;
+        return Arrays.stream(drinkIngredientsPrice).mapToInt(Integer::intValue).sum() * amount;
     }
 
-    //one unit of rum
-    private int ingredient1() {
-        return 65;
+    public int computeCost2(String strDrink, boolean student, int amount) {
+        return Optional.ofNullable(drinks.get(strDrink.toLowerCase()))
+                .orElseThrow(() -> new RuntimeException("No such drink exists"))
+                .apply(student, amount);
     }
 
-    //one unit of grenadine
-    private int ingredient2() {
-        return 10;
+    public int computeCost(String strDrink, boolean student, int amount) {
+
+        return Optional.ofNullable(Drink.getByName(strDrink))
+                .filter(drink -> drink.isAcceptableAmount(amount))
+                .map(drink -> drink.computeTotalPrice(student, amount))
+                .orElseThrow(() -> new RuntimeException("Too many drinks, max 2."));
     }
 
-    //one unit of lime juice
-    private int ingredient3() {
-        return 10;
-    }
-    
-    //one unit of green stuff
-    private int ingredient4() {
-        return 10;
-    }
-
-    //one unit of tonic water
-    private int ingredient5() {
-        return 20;
-    }
-
-    //one unit of gin
-    private int ingredient6() {
-        return 85;
-    }
 }
