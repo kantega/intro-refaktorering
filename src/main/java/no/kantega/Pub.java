@@ -7,6 +7,8 @@ import java.util.function.BiFunction;
 
 public class Pub {
 
+    public static final int MAX_COCKTAILS_IN_ORDER = 2;
+    public static final int STUDENT_DISCOUNT = 10;
     public static final String ONE_BEER = "hansa";
     public static final String ONE_CIDER = "grans";
     public static final String A_PROPER_CIDER = "strongbow";
@@ -27,12 +29,12 @@ public class Pub {
     );
 
     private static int computeSimpleBeverage(boolean student, int amount, int cost) {
-        return student ? (cost - cost/10) * amount : cost * amount;
+        return student ? (cost - cost/ STUDENT_DISCOUNT) * amount : cost * amount;
     }
 
     private static int computeCocktail(int amount, Integer... drinkIngredientsPrice) {
-        if (amount > 2) {
-            throw new RuntimeException("Too many drinks, max 2.");
+        if (amount > MAX_COCKTAILS_IN_ORDER) {
+            throw new RuntimeException(String.format("Too many drinks, max %d.", MAX_COCKTAILS_IN_ORDER));
         }
         return Arrays.stream(drinkIngredientsPrice).mapToInt(Integer::intValue).sum() * amount;
     }
