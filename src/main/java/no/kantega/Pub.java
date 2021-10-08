@@ -1,69 +1,58 @@
 package no.kantega;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Pub {
-
-
     public static final String ONE_BEER = "hansa";
     public static final String ONE_CIDER = "grans";
     public static final String A_PROPER_CIDER = "strongbow";
     public static final String GT = "gt";
     public static final String BACARDI_SPECIAL = "bacardi_special";
 
-    public int computeCost(String drink, boolean student, int amount) {
+    public static final int STUDENT_DISCOUNT_IN_PERCENT = 10;
+    public static final int MAX_COCKTAILS_FOR_SINGLE_ORDER = 2;
 
-        if (amount > 2 && (drink == GT || drink == BACARDI_SPECIAL)) {
-            throw new RuntimeException("Too many drinks, max 2.");
-        }
-        int price;
-        if (drink.equals(ONE_BEER)) {
-            price = 74;
-        }
-        else if (drink.equals(ONE_CIDER)) {
-            price = 103;
-        }
-        else if (drink.equals(A_PROPER_CIDER)) price = 110;
-        else if (drink.equals(GT)) {
-            price = ingredient6() + ingredient5() + ingredient4();
-        }
-        else if (drink.equals(BACARDI_SPECIAL)) {
-            price = ingredient6()/2 + ingredient1() + ingredient2() + ingredient3();
-        }
-        else {
+    Map<String, Beverage> menu;
+
+    public Pub() {
+        this.menu = new HashMap<String, Beverage>();
+        menu.put(ONE_BEER, new SimpleBeverage(74));
+        menu.put(ONE_CIDER, new SimpleBeverage(103));
+        menu.put(A_PROPER_CIDER, new SimpleBeverage(110));
+        menu.put(GT, new Cocktail(
+                Ingredient.UNIT_OF_GIN,
+                Ingredient.UNIT_OF_TONIC_WATER,
+                Ingredient.UNIT_OF_GREEN_STUFF));
+        menu.put(BACARDI_SPECIAL, new Cocktail(
+                new IngredientAmount(Ingredient.UNIT_OF_GIN, 0.5),
+                new IngredientAmount(Ingredient.UNIT_OF_RUM),
+                new IngredientAmount(Ingredient.UNIT_OF_GRENADINE),
+                new IngredientAmount(Ingredient.UNIT_OF_LIME_JUICE)));
+    }
+
+    public int computeCost(String drink, boolean student, int amount) {
+        if (!menu.containsKey(drink)) {
             throw new RuntimeException("No such drink exists");
         }
-        if (student && (drink == ONE_CIDER || drink == ONE_BEER || drink == A_PROPER_CIDER)) {
-            price = price - price/10;
-        }
+
+        Beverage beverage = menu.get(drink);
+        verifyCocktailOrder(beverage, amount);
+
+        int price = adjustPriceForStudentDiscount(beverage, student);
         return price*amount;
     }
 
-    //one unit of rum
-    private int ingredient1() {
-        return 65;
+    private int adjustPriceForStudentDiscount(Beverage beverage, boolean student) {
+        if (student && beverage.isEligibleForStudentDiscount()) {
+            return beverage.getPrice() - beverage.getPrice() / STUDENT_DISCOUNT_IN_PERCENT;
+        }
+        return beverage.getPrice();
     }
 
-    //one unit of grenadine
-    private int ingredient2() {
-        return 10;
-    }
-
-    //one unit of lime juice
-    private int ingredient3() {
-        return 10;
-    }
-    
-    //one unit of green stuff
-    private int ingredient4() {
-        return 10;
-    }
-
-    //one unit of tonic water
-    private int ingredient5() {
-        return 20;
-    }
-
-    //one unit of gin
-    private int ingredient6() {
-        return 85;
+    private void verifyCocktailOrder(Beverage beverage, int amount) {
+        if (amount > MAX_COCKTAILS_FOR_SINGLE_ORDER && beverage.isAmountLimited()) {
+            throw new RuntimeException("Too many drinks, max " + MAX_COCKTAILS_FOR_SINGLE_ORDER + ".");
+        }
     }
 }
