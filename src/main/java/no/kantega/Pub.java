@@ -26,11 +26,11 @@ public class Pub {
                     computeCocktail(amount, DrinkIngredient.GIN.getPrice(2), DrinkIngredient.RUM.getPrice(), DrinkIngredient.GRENADINE.getPrice(), DrinkIngredient.LIME_JUICE.getPrice())
     );
 
-    private int computeSimpleBeverage(boolean student, int amount, int cost) {
+    private static int computeSimpleBeverage(boolean student, int amount, int cost) {
         return student ? (cost - cost/10) * amount : cost * amount;
     }
 
-    private int computeCocktail(int amount, Integer... drinkIngredientsPrice) {
+    private static int computeCocktail(int amount, Integer... drinkIngredientsPrice) {
         if (amount > 2) {
             throw new RuntimeException("Too many drinks, max 2.");
         }
