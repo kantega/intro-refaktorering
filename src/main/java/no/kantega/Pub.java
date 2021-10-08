@@ -37,18 +37,9 @@ public class Pub {
         return Arrays.stream(drinkIngredientsPrice).mapToInt(Integer::intValue).sum() * amount;
     }
 
-    public int computeCost2(String strDrink, boolean student, int amount) {
+    public int computeCost(String strDrink, boolean student, int amount) {
         return Optional.ofNullable(drinks.get(strDrink.toLowerCase()))
                 .orElseThrow(() -> new RuntimeException("No such drink exists"))
                 .apply(student, amount);
     }
-
-    public int computeCost(String strDrink, boolean student, int amount) {
-
-        return Optional.ofNullable(Drink.getByName(strDrink))
-                .filter(drink -> drink.isAcceptableAmount(amount))
-                .map(drink -> drink.computeTotalPrice(student, amount))
-                .orElseThrow(() -> new RuntimeException("Too many drinks, max 2."));
-    }
-
 }
