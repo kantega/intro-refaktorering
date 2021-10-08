@@ -15,7 +15,7 @@ public class Pub {
         return Optional.ofNullable(Drink.getByName(strDrink))
                 .filter(drink -> drink.isAcceptableAmount(amount))
                 .map(drink -> drink.computeTotalPrice(student, amount))
-                .orElseThrow(() -> new RuntimeException("Too many drinks, max 2."));
+                .orElseThrow(() -> new RuntimeException(String.format("Too many drinks, max %d.", Drink.MAX_COCKTAILS_IN_ORDER)));
     }
 
 }
