@@ -9,6 +9,7 @@ public class Pub {
 
     public static final int MAX_COCKTAILS_IN_ORDER = 2;
     public static final int STUDENT_DISCOUNT = 10;
+
     public static final String ONE_BEER = "hansa";
     public static final String ONE_CIDER = "grans";
     public static final String A_PROPER_CIDER = "strongbow";
