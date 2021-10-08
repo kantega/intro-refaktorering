@@ -14,9 +14,12 @@ public class Pub {
     public static final String BACARDI_SPECIAL = "bacardi_special";
 
     Map<String, BiFunction<Boolean, Integer, Integer>> drinks = Map.of(
-            ONE_BEER, (student, amount) -> computeSimpleBeverage(student, amount, 74),
-            ONE_CIDER, (student, amount) -> computeSimpleBeverage(student, amount, 103),
-            A_PROPER_CIDER, (student, amount) -> computeSimpleBeverage(student, amount, 110),
+            ONE_BEER, (student, amount) ->
+                    computeSimpleBeverage(student, amount, 74),
+            ONE_CIDER, (student, amount) ->
+                    computeSimpleBeverage(student, amount, 103),
+            A_PROPER_CIDER, (student, amount) ->
+                    computeSimpleBeverage(student, amount, 110),
             GT, (student, amount) ->
                     computeCocktail(amount, DrinkIngredient.GIN.getPrice(), DrinkIngredient.GREEN_STUFF.getPrice(), DrinkIngredient.TONIC_WATER.getPrice()),
             BACARDI_SPECIAL, (student, amount) ->
@@ -24,10 +27,7 @@ public class Pub {
     );
 
     private int computeSimpleBeverage(boolean student, int amount, int cost) {
-        if (student) {
-            return (cost - cost/10) * amount;
-        }
-        return cost * amount;
+        return student ? (cost - cost/10) * amount : cost * amount;
     }
 
     private int computeCocktail(int amount, Integer... drinkIngredientsPrice) {
