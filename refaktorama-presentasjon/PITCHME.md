@@ -65,10 +65,6 @@ Note:
 
 ---?image=nerdschool.jpg&size=100%
 
-@snap[north-west]
-### @color[#27003D](Nerdschool)
-@snapend
-
 Note: 
 - bilde av nerdschool-event
 - holdt refaktoreringsworkshops for nybegynnere i mange år gjennom nerdschool
@@ -107,27 +103,9 @@ Note:
 
 ---
 
-@snap[north-west]
-### Velg en ramme for arbeidet 
-@snapend
-
-* redesign
-* behold API-grensesnitt 
-* minimal stil: ferdig på maks 2 timer
-
-Note:
-- "alt" er lov: redesign, prisen skal være den samme
-- Testgrensesnitt (API) skal beholdes, ellers står du/dere fritt til å endre
-- fullstendig løsning i løpet av 2 timer (minimum effort)
-- alle kan legge på tester dersom refaktoreringen krever det (vet det finnes
-  noen løsninger som lager hull i testdekning)
-
-
---- 
-
 ### Oppgaven 
 
-https://github.com/sivhollup/intro-refaktorering
+https://github.com/kantega/intro-refaktorering
 
 Note:
 - en implementasjonsklasse (Pub), og en testklasse. En metode som testes, den
@@ -141,13 +119,4 @@ Note:
 
 ---
 
-### Etterarbeid
-
-Note:
-- vi har lyst til at noen av dere presenterer løsningen kort på neste faggruppe
-- etterfulgt av generell diskusjon
-- vi planlegger også en blogpost med eksempler fra koden som blir levert (enten
-  full PR eller utdrag i selve blogposten)
-
-
-
+### Ha det gøy! 🚀

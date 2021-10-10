@@ -21,6 +21,61 @@ Note:
   påvirker kvalitet
 
 
+---?image=https://images.pexels.com/photos/7367/startup-photo.jpg
+
+@snap[north-west]
+
+### @color[#27003D](Hvorfor refaktorerer vi?)
+@snapend
+
+Note:
+- gjøre koden mer lesbar
+- betale tilbake teknisk gjeld (fjerne snarveiene)
+- tilrettelegge for ny funksjonalitet
+- endret forståelse av domenet
+
+---?image=https://images.pexels.com/photos/39900/alarm-clock-clock-time-minute-39900.jpeg&size=100%
+
+@snap[south-west]
+### Virkeligheten<br> hindrer oss
+@snapend
+
+Note:
+- bilde av klokke
+- Hva slags utfordringer møter vi i praksis?
+- Tid: ofte travelt i prosjekter, vi får ikke alltid gjort de refaktoreringene
+  vi ønsker. Kan være pga mye ny funksjonalitet som skal inn, eller gammelt
+  system.
+- Penger
+- Mer konkret:
+- manglende tester <-- endring er utrygt
+- tester som sementerer implementasjon <-- endring er vanskelig
+- Kodekvalitet: navngiving, lange metoder, rammeverk, ulike kodestandarder
+- arkitektur: ingen klar tanke, evt feil tanke, ulike tanker blandet sammen
+- de overstående tingene er jo det vi vil fikse, men det hindrer oss fra å bare
+  sette igang også
+- brukere: eksterne er avhengige av systemet, hindrer endring
+- kode i stadig endring: vanskelig å gjøre store/inngripende endringer
+
+
+---?image=https://images.pexels.com/photos/355948/pexels-photo-355948.jpeg
+
+@snap[north]
+### Strategier
+@snapend
+
+Note:
+- leve med det
+- gjøre minimale endringer jevnlig for å alltid gjøre verden litt
+  bedre, planlegge godt slik at stegene blir små
+- beholde grensesnitt, men gjøre store omskrivinger på innsiden
+- kast det gamle, skriv nytt
+- limited red: lag ny, duplisert funksjonalitet og erstatt etterhvert
+- endre API og levere ny ikke-bak-over-kompatibelt system
+- presentere noen vanlige refaktoreringer
+
+
+
 ---?image=https://cdn.aarp.net/content/dam/aarp/health/brain_health/2018/04/1140-name-recall-troubles.imgcache.rev3d7f9d37718cb83ff9ed72a0db9dfb55.jpg
 
 Note:
@@ -40,12 +95,19 @@ public Report getReport() {
 }
 
 // Better
-public Report getExpenditureReport() {
-}
+public Report getExpenditureReport() { }
+// or
+public Report getFullReportExcludingAccounts() { } 
+// or
+public Report getFullReportIncludingAccounts() { } 
 ```
 
 Note:
 - hva er inneholdt i variabel eller funksjon? Hva er intensjonen?
+- beskriv forskjell på funksjonene i navnet, ikke la det være en overraskelse
+- unngå generelle begreper/bruk med forsiktighet (info/data sier ingenting)
+- husk at mange slike metoder tar lang tid å sette seg inn i, særlig når
+  parameterlisten er lignende i tillegg
 
 
 ---
@@ -64,34 +126,6 @@ Note:
 - forventer at x1 og x2 er relaterte
 - forventer at x-ene og n-ene er forskjellige konsepter
 - calculate: hva beregnes? Dette er dårlig navngiving. 
-
-
----
-
-@snap[north]
-### Unngå generelle begreper
-@snapend
-
-```
-public class ExpenditureReportsRepository {
-    //Nope
-    public Report getReport() { }
-    public Report getReportInfo() { }
-    public Report getReportData() { }
-
-    //Better
-    public Report getReportSummary() { }
-    public Report getFullReportExcludingAccounts() { } 
-    public Report getFullReportIncludingAccounts() { } 
-}
-```
-
-Note:
-- hva er forskjell på info og data? Gir ingenting ekstra
-- hvilken info? Info/Data er vagt, uspesifikt.  
-- beskriv forskjell på funksjonene i navnet, ikke la det være en overraskelse
-- husk at mange slike metoder tar lang tid å sette seg inn i, særlig når
-  parameterlisten er lignende i tillegg
 
 
 ---
@@ -169,13 +203,13 @@ Note:
 ---?image=number_of_lines_in_function.png&size=50%
 
 @snap[north]
-### Funksjoner er korte
+### Size matters
 @snapend
 
 Note:
 - enkleste: antall linjer. Små funksjoner er generelt bra, store er generelt
   dårlige. 
-- Hva er stort? Mer enn 20 linjer (ca). 
+- Hva er stort? Mer enn 20 linjer (ca): kommer an på kontekst
 - Jeg har jobbet med en funksjon på 1100 linjer, skyt meg nå. 
 - mennesker klarer kun å holde et begrenset antall konsepter i hodet samtidig,
   maks 7. Vi må skrive kode som hjelper utvikleren. 
@@ -185,7 +219,7 @@ Note:
 ---
 
 @snap[north]
-### Funksjoner har et abstraksjonsnivå
+### Funksjoner har få abstraksjonsnivå
 @snapend
 
 ```
@@ -239,34 +273,6 @@ Note:
 - redirect hører ikke hjemme her
 - søkt eksempel? Kanskje. Men denne type ting skjer. 
 - Denne er innlysende, men vær obs på mer subtile bieffekter
-
-
----
-
-@snap[north]
-### Unngå duplisering
-@snapend
-
-```
-//Better
-public void sendMailToAllClerks(ApplicationForm form, List<Clerk> clerks){
-    for (Clerk clerk : clerks) {
-        sendMailToClerk(form clerk);
-    }
-}
-
-public void sendMailToClerk(Application form, Clerk clerk) {
-    MimeMessage message = new MimeMessage(session);
-    // ...
-    message.send();
-}
-```
-
-Note: 
-- ikke dupliser mellom disse metodene
-- dersom det er små forskjeller mellom hva som skjer for en og alle (feks i
-  hvordan subject genereres), se om du klarer å lage metodesignaturene like slik
-  at du kan unngå duplisering
 
 
 ---?image=https://images.pexels.com/photos/1851415/pexels-photo-1851415.jpeg
@@ -349,17 +355,11 @@ Note:
 
 ### Refaktorering
 
-Note:
-- også kalt refaktorisering
-- hva er det? 
-
-
-
----
 
 @quote[A change made to the internal structure of software to make it easier to understand and cheaper to modify without changing its observable behavior](Martin Fowler)
 
 Note:
+- også kalt refaktorisering
 - endre kode uten å endre resultat av koden
 
 
@@ -378,73 +378,21 @@ Note:
 
 ---
 
-### Forbedre navngiving
+### Vanlige refaktoreringsmetoder
 
-
-```
-//Nope
-int n = numberOfRentals();
-int n2 = numberOfDaysSinceStart();
-double number = n / n2;
-
-//Better
-int numberOfRentals = numberOfRentals();
-int numberOfDays = numberOfDaysSinceStart();
-double averageRentalsPerDay = numberOfRentals / numberOfDays();
-
-```
+- Forbedre navngiving
+- Flytt på kode
+- Dupliser kode midlertidig: minimum red refactoring
 
 Note: 
 - Gjør koden selvdokumenterende
 - navngiving kan være vanskelig
 - variabler, funksjoner, klasser. 
-
-
----
-
-### Flytt på kode
-
-```
-// Nope
-public void mainMethod() {  
-   // Code here
-   int numberOfRentals = numberOfRentals();
-   int numberOfDays = numberOfDaysSinceStart();
-   int averageNumberOfRentalsPerDay = numberOfRentals / numberOfDays;
-   // More code here
-}
-
-```
-
-
-Note: 
 - extract variable, function, class
 - kode som står for seg selv, uavhengig av andre ting, eget konsept, kan få egen
   funksjon/klasse
 - bruker du samme variabel mange steder uten å si det? Lag en variabel så det er
   lett å se hvor den kommer fra og alle steder den er brukt
-
-
----
-
-### Flytt på kode 
-
-```
-// Better
-public void mainMethod() {   
-   // Code here
-   int averageNumberOfRentalsPerDay = calculateAverageRentalsPerDay();
-   // More code here
-}
-private void calculateAverageRentalsPerDay() {
-   int numberOfRentals = numberOfRentals();
-   int numberOfDays = numberOfDaysSinceStart();
-   return numberOfRentals / numberOfDays;
-}
-
-```
-
-Note: 
 - indikerer at disse tingene henger sammen, og at de ikke henger sammen med
   resten av koden
 - både parametre og oppførsel som er egen enhet? Da er det gjerne en klasse
@@ -462,4 +410,13 @@ Note:
 
 ### Dagens oppgave
 
-Refaktorer problematisk kode
+https://github.com/kantega/intro-refaktorering
+
+Note: 
+- en testklasse, en implementasjonsklasse
+- ca 50 linjer produksjonskode
+- full testdekning: prøv å ha grønne tester mesteparten av tiden
+- kvaliteten er ikke bra nok, den må forbedres
+- koden hjelper puben med å gjøre bestillinger og holde styr på hva som er i
+  menyen: Det må bli lettere å legge til nye eller andre drikkevarer i menyen
+
